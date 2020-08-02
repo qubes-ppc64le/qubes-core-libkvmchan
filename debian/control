@@ -1,0 +1,26 @@
+Source: libkvmchan
+Section: libs
+Priority: extra
+Maintainer: Jason Mehring <nrgaway@gmail.com>
+## XXX: libvirt-dev and libxml2-dev are temp depends. The libkvmchan code needs
+##      to be split into host / guest modules since libvirt is only required on
+##      host.
+Build-Depends: debhelper, quilt, autotools-dev, check, libvirt-dev, libxml2-dev
+Standards-Version: 3.9.5
+Homepage: http://www.qubes-os.org
+
+Package: libkvmchan
+Section: libs
+Architecture: amd64
+#Depends: libxenstore3.0, ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description:
+ An implementation of the Xen libvchan shared memory API for KVM+QEMU. It
+ utilizes ivshmem to provide the memory backend and a custom daemon to allow
+ run-time configuration of vchans.
+
+Package: libkvmchan-dev
+Section: libdevel
+Architecture: amd64
+Depends: libkvmchan (= ${binary:Version}), ${misc:Depends}
+Description: Development files for libkvmchan communication library.

@@ -1,0 +1,3 @@
+usr/include/libkvmchan.h
+usr/include/libkvmchan-priv.h
+usr/lib/pkgconfig/kvmchan.pc

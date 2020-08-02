@@ -1,0 +1,93 @@
+#
+# The Qubes OS Project, http://www.qubes-os.org
+#
+# Copyright (C) 2010  Joanna Rutkowska <joanna@invisiblethingslab.com>
+# Copyright (C) 2010  Rafal Wojtczuk  <rafal@invisiblethingslab.com>
+# Copyright (C) 2012  Marek Marczykowski <marmarek@invisiblethingslab.com>
+# Copyright (C) 2018-2019 Shawn Anastasio
+# Copyright (C) 2020  Jason Mehring
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+#
+
+Name:		libkvmchan
+Version:	@VERSION@
+Release:	1%{dist}
+
+Summary:	KVM libkvmchan libraries
+License:	GPL v2 only
+Group:		Qubes
+Vendor:		Invisible Things Lab
+URL:		http://www.qubes-os.org
+#Obsoletes:  qubes-core-libs < 2.1.2
+Provides:   qubes-core-libs
+Provides:   qubes-libvchan
+BuildRequires: gcc
+BuildRequires: check-devel
+## XXX: libvirt-dev and libxml2-dev are temp depends. The libkvmchan code needs
+##      to be split into host / guest modules since libvirt is only required on
+##      host.
+BuildRequires: libvirt-devel
+BuildRequires: libxml2-devel
+########
+Source0:    %{name}-%{version}.tar.gz
+
+%description
+An implementation of the Xen libvchan shared memory API for KVM+QEMU. It
+utilizes ivshmem to provide the memory backend and a custom daemon to allow
+run-time configuration of vchans.
+
+%prep
+%setup -q
+
+%build
+%set_build_flags
+export BINDIR=%{_bindir}
+export LIBDIR=%{_libdir}
+export INCLUDEDIR=%{_includedir}
+make all
+
+%install
+export SBINDIR=%{_sbindir}
+export LIBDIR=%{_libdir}
+export INCLUDEDIR=%{_includedir}
+make DESTDIR=$RPM_BUILD_ROOT install
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+rm -f %{name}-%{version}
+
+%files
+%{_sbindir}/kvmchand
+%{_libdir}/libkvmchan.so
+
+%package devel
+Summary:        Include files for libkvmchan libraries
+License:        GPL v2 only
+Group:          Development/Sources
+Provides:       qubes-core-vm-devel
+Provides:       qubes-core-libs-devel
+Provides:       qubes-libvchan-devel
+Requires:       %{name} = %{version}-%{release}
+Requires:       pkgconfig
+
+%description devel
+
+%files devel
+%{_includedir}/libkvmchan.h
+%{_includedir}/libkvmchan-priv.h
+%{_libdir}/pkgconfig/kvmchan.pc
+
+%changelog
+@CHANGELOG@
