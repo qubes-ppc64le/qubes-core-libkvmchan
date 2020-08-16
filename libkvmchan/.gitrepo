@@ -1,0 +1,12 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:nrgaway/libkvmchan.git
+	branch = master
+	commit = 8b605c2e616b4b61b267e5ef8f2552063d3fcb6b
+	parent = 9ffcdee6938331144e8607c73325df3de825ffa8
+	method = merge
+	cmdver = 0.4.0
