@@ -1,0 +1,15 @@
+[Unit]
+Description=KVM vchan daemon
+DefaultDependencies=no
+After=systemd-modules-load.service fedora-loadmodules.service
+
+[Service]
+Type=notify
+ExecStartPre=/usr/lib/qubes/qubes-kvm
+ExecStart=/usr/sbin/kvmchand -g
+KillMode=process
+StandardOutput=syslog
+NotifyAccess=all
+
+[Install]
+WantedBy=sysinit.target

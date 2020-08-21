@@ -21,32 +21,55 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-Name:		libkvmchan
-Version:	@VERSION@
-Release:	1%{dist}
+Name:           libkvmchan
+Version:        @VERSION@
+Release:        1%{dist}
+Summary:        KVM libkvmchan libraries
 
-Summary:	KVM libkvmchan libraries
-License:	GPL v2 only
-Group:		Qubes
-Vendor:		Invisible Things Lab
-URL:		http://www.qubes-os.org
-#Obsoletes:  qubes-core-libs < 2.1.2
-Provides:   qubes-core-libs
-Provides:   qubes-libvchan
-BuildRequires: gcc
-BuildRequires: check-devel
+Group:          Qubes
+License:        GNU LGPL v3.0
+URL:            http://www.qubes-os.org
+
+Provides:       qubes-core-libs
+Provides:       qubes-libvchan
+BuildRequires:  gcc
+BuildRequires:  check-devel
+BuildRequires:  systemd-devel
 ## XXX: libvirt-dev and libxml2-dev are temp depends. The libkvmchan code needs
 ##      to be split into host / guest modules since libvirt is only required on
 ##      host.
-BuildRequires: libvirt-devel
-BuildRequires: libxml2-devel
+BuildRequires:  libvirt-devel
+BuildRequires:  libxml2-devel
 ########
-Source0:    %{name}-%{version}.tar.gz
+#Requires:       %%{name}-libs-%%{version}-%%{release}
+Requires:       %{name}-libs = %{version}-%{release}
+Source0:        %{name}-%{version}.tar.gz
 
 %description
 An implementation of the Xen libvchan shared memory API for KVM+QEMU. It
 utilizes ivshmem to provide the memory backend and a custom daemon to allow
 run-time configuration of vchans.
+
+%package libs
+Summary:        Libs for libkvmchan libraries
+Group:          Qubes
+
+%description libs
+libkvmchan library.
+
+%package devel
+Summary:        Include files for libkvmchan libraries
+Group:          Qubes
+License:        GNU LGPL v3.0
+Provides:       qubes-core-vm-devel
+Provides:       qubes-core-libs-devel
+Provides:       qubes-libvchan-devel
+Provides:       qubes-libvchan-devel
+Requires:       %{name}-libs = %{version}-%{release}
+#Requires:       libkvmchan-libs
+Requires:       pkgconfig
+
+%description devel
 
 %prep
 %setup -q
@@ -70,19 +93,9 @@ rm -f %{name}-%{version}
 
 %files
 %{_sbindir}/kvmchand
+
+%files libs
 %{_libdir}/libkvmchan.so
-
-%package devel
-Summary:        Include files for libkvmchan libraries
-License:        GPL v2 only
-Group:          Development/Sources
-Provides:       qubes-core-vm-devel
-Provides:       qubes-core-libs-devel
-Provides:       qubes-libvchan-devel
-Requires:       %{name} = %{version}-%{release}
-Requires:       pkgconfig
-
-%description devel
 
 %files devel
 %{_includedir}/libkvmchan.h
