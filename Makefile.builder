@@ -1,18 +1,29 @@
 RPM_SPEC_FILES := rpm_spec/libkvmchan.spec
-ARCH_BUILD_DIRS := archlinux
 
-ifeq ($(PACKAGE_SET),vm)
+ifeq ($(PACKAGE_SET),dom0)
+  RPM_SPEC_FILES += rpm_spec/libkvmchan-host.spec
+
+else ifeq ($(PACKAGE_SET),vm)
   ifneq ($(filter $(DISTRIBUTION), debian qubuntu),)
     DEBIAN_BUILD_DIRS := debian
+    #SOURCE_COPY_IN := source-debian-quilt-copy-in
   endif
 
-  WIN_COMPILER = msbuild
-  WIN_SOURCE_SUBDIRS = windows
-  WIN_BUILD_DEPS = vmm-xen-windows-pvdrivers
-  WIN_OUTPUT_LIBS = bin
-  WIN_OUTPUT_HEADERS = include
-  WIN_PREBUILD_CMD = set_version.bat && powershell -executionpolicy bypass -File set_version.ps1 < nul
-  WIN_SLN_DIR = vs2017
+  RPM_SPEC_FILES += rpm_spec/libkvmchan-vm.spec
+  ARCH_BUILD_DIRS := archlinux
 endif
+
+ifeq ($(PACKAGE_SET),vm)
+  WIN_SOURCE_SUBDIRS := windows
+  WIN_SLN_DIR := vs2017
+  WIN_COMPILER := msbuild
+  WIN_OUTPUT_LIBS = bin
+  WIN_OUTPUT_HEADERS = ../include
+  WIN_BUILD_DEPS = windows-utils
+  WIN_PREBUILD_CMD = set_version.bat && powershell -executionpolicy bypass -File set_version.ps1 < nul
+endif
+
+#source-debian-quilt-copy-in:
+#	$(shell $(ORIG_SRC)/debian-quilt $(ORIG_SRC)/series-debian-vm.conf $(CHROOT_DIR)/$(DIST_SRC)/debian/patches)
 
 # vim: filetype=make
