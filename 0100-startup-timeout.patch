@@ -1,0 +1,34 @@
+diff --git a/libkvmchan/daemon/connections.c b/libkvmchan/daemon/connections.c
+index 6a8c554..63f0db2 100644
+--- a/libkvmchan/daemon/connections.c
++++ b/libkvmchan/daemon/connections.c
+@@ -289,6 +289,29 @@ bool vchan_conn(uint32_t server_dom, uint32_t client_dom, uint32_t port,
+         return false;
+     }
+ 
++    /*
++    //// KVM:  TEST
++    //int startup_timeout = MAX_STARTUP_TIME_DEFAULT;
++    int timer;
++    int startup_timeout = 120;
++    struct connection *conn = connections_get_by_dom(server_dom, client_dom, port, NULL);
++    if (!conn) {
++        for (timer=0;timer<startup_timeout;timer++) {
++            sleep(1);
++            struct connection *conn = connections_get_by_dom(server_dom, client_dom, port, NULL);
++            if (conn) {
++                break;
++            }
++            if (timer==startup_timeout-1) {
++                log(LOGL_WARN, "Tried to connect to non-existent vchan at dom %"PRIu32" port %"PRIu32,
++                    server_dom, port);
++                return false;
++            }
++        }
++    }
++    ////////
++    */
++
+     if (client_dom == 0) {
+         // Called from dom 0, return the ivpos+pid of the server so that
+         // the conn fds for this connection can be looked up by the caller
