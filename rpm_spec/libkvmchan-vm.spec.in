@@ -1,0 +1,74 @@
+#
+# The Qubes OS Project, http://www.qubes-os.org
+#
+# Copyright (C) 2010  Joanna Rutkowska <joanna@invisiblethingslab.com>
+# Copyright (C) 2010  Rafal Wojtczuk  <rafal@invisiblethingslab.com>
+# Copyright (C) 2012  Marek Marczykowski <marmarek@invisiblethingslab.com>
+# Copyright (C) 2018-2019 Shawn Anastasio
+# Copyright (C) 2020  Jason Mehring
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+#
+
+# Package contains /usr/lib, but not binary files, which confuses find-debuginfo.sh script.
+%global debug_package %{nil}
+
+Name:           libkvmchan-vm
+Version:        @VERSION@
+Release:        1%{dist}
+Summary:        KVM libkvmchan service
+
+Group:          Qubes
+License:        GNU LGPL v3.0
+URL:            http://www.qubes-os.org
+
+BuildRequires:  systemd-devel
+Requires:       libkvmchan
+#Requires:       %%{name} = libs-%%{version}-%%{release}
+Requires(post): /bin/systemctl
+
+Source0:        libkvmchan-%{version}.tar.gz
+
+%description
+Guest VM libkvmchan daemon service.
+
+%prep
+#%%setup -q
+%setup -q -n libkvmchan-%{version}
+
+%build
+
+%install
+install -d %{buildroot}%{_unitdir}
+install -d %{buildroot}/usr/lib/qubes
+install -p -m 644 systemd/kvmchand.service %{buildroot}%{_unitdir}/
+install -p -m 755 systemd/qubes-kvm %{buildroot}/usr/lib/qubes/
+
+%post
+systemctl enable kvmchand.service > /dev/null
+
+%preun
+if [ $1 -eq 0 ]; then
+    systemctl disable kvmchand.service > /dev/null
+fi
+
+%files
+%dir /usr/lib/qubes
+/usr/lib/qubes/qubes-kvm
+
+%doc
+%{_unitdir}/kvmchand.service
+
+%changelog
+@CHANGELOG@

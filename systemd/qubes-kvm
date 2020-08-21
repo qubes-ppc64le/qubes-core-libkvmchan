@@ -1,0 +1,13 @@
+#!/usr/bin/sh
+
+/usr/sbin/modprobe vfio-pci || true
+/usr/bin/sh -c "echo 1 > /sys/module/vfio/parameters/enable_unsafe_noiommu_mode"
+
+mkdir -p /var/run/qubes
+chmod 2770 /var/run/qubes
+chgrp qubes /var/run/qubes
+
+mkdir -p /var/run/qubes-service
+touch /var/run/qubes-service/hypervisor-kvm
+
+mkdir -p /var/log/qubes
