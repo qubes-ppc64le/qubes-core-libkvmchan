@@ -1,0 +1,78 @@
+diff --git a/libkvmchan/daemon/daemon.c b/libkvmchan/daemon/daemon.c
+index 0834a53..63eab4f 100644
+--- a/libkvmchan/daemon/daemon.c
++++ b/libkvmchan/daemon/daemon.c
+@@ -377,53 +377,73 @@ static void guest_main(void) {
+     if (socketpair(AF_UNIX, SOCK_STREAM, 0, main_localhandler_sv) < 0)
+         goto fail_errno;
+ 
++    log(LOGL_INFO, "guest_main: start");
++
++    log(LOGL_INFO, "guest_main: spawn_vfio_process");
+     // Spawn VFIO process
+     pid_t vfio, localhandler;
+     if ((vfio = fork()) < 0) {
+         goto fail_errno;
+     } else if (vfio == 0) {
++        log(LOGL_INFO, "guest_main: vfio==0");
++
+         // Get notified when parent exits
+         prctl(PR_SET_PDEATHSIG, SIGHUP);
+ 
++        log(LOGL_INFO, "guest_main: close_unused_socketpair");
+         // Close unused socketpair fds
+         close(main_vfio_sv[0]);
+ 
++        log(LOGL_INFO, "guest_main: run_vfio_loop");
+         run_vfio_loop(main_vfio_sv[1]);
+ 
+         // NOTREACHED
++        log(LOGL_INFO, "guest_main: bailout");
+         bail_out();
+     }
+ 
++    log(LOGL_INFO, "guest_main: spawn localhandler");
+     // Spawn localhandler process
+     if ((localhandler = fork()) < 0) {
+         goto fail_errno;
+     } else if (localhandler == 0) {
++        log(LOGL_INFO, "guest_main: set prctl");
+         // Get notified when parent exits
+         prctl(PR_SET_PDEATHSIG, SIGHUP);
+ 
++        log(LOGL_INFO, "guest_main: close_unused_socketpair");
+         // Close unused socketpair fds
+         close(main_localhandler_sv[0]);
+ 
++        log(LOGL_INFO, "guest_main: run_localhandler_loop");
+         run_localhandler_loop(main_localhandler_sv[1], false);
+ 
+         // NOTREACHED
++        log(LOGL_INFO, "guest_main: bailout");
+         bail_out();
+     }
+ 
+     // Close unused fds
++    log(LOGL_INFO, "guest_main: close_unused_fds");
+     close(main_vfio_sv[1]);
+     close(main_localhandler_sv[1]);
+ 
+     // listen for messages
++    log(LOGL_INFO, "guest_main: listen_for_messages");
+     int sockets[NUM_IPC_SOCKETS];
+     for (uint8_t i=0; i<NUM_IPC_SOCKETS; i++)
+         sockets[i] = -1;
+ 
++    log(LOGL_INFO, "guest_main: main_vfio_sv");
+     sockets[IPC_SOCKET_VFIO] = main_vfio_sv[0];
++    log(LOGL_INFO, "guest_main: main_localhsndler_sv");
+     sockets[IPC_SOCKET_LOCALHANDLER] = main_localhandler_sv[0];
+ 
++    log(LOGL_INFO, "guest_main: ipc_server_start");
+     ipc_server_start(sockets, handle_message);
+ 
++    log(LOGL_INFO, "guest_main: done");
++
+ fail_errno:
+     log(LOGL_ERROR, "Daemon init failed: %m");
+     bail_out();

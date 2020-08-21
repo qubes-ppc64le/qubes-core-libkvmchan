@@ -1,0 +1,61 @@
+diff --git a/libkvmchan/Makefile b/libkvmchan/Makefile
+index eec5ab9..3a02ef6 100644
+--- a/libkvmchan/Makefile
++++ b/libkvmchan/Makefile
+@@ -4,12 +4,18 @@ BIN:=libkvmchan.so
+ LIBS=-lrt -pthread
+ DEBUG:=true
+ 
++SYSTEMD ?= 1
++
+ DAEMON_SRCS:=daemon/daemon.c daemon/libvirt.c daemon/util.c daemon/ivshmem.c daemon/vfio.c \
+ 	daemon/ipc.c daemon/connections.c daemon/localhandler.c
+ DAEMON_DEPS:=$(DAEMON_SRCS:.c=.daemon.o)
+ DAEMON_BIN:=kvmchand
+ DAEMON_LIBS:=-lrt -pthread $(shell pkg-config --libs libvirt libvirt-qemu libxml-2.0)
+ DAEMON_CFLAGS:=$(shell pkg-config --cflags libxml-2.0)
++ifeq ($(SYSTEMD),1)
++DAEMON_CFLAGS += -DHAVE_SYSTEMD
++DAEMON_LIBS += `pkg-config --libs libsystemd || pkg-config --libs libsystemd-daemon`
++endif
+ 
+ TEST_SRCS:=test.c
+ TEST_DEPS:=$(TEST_SRCS:.c=.o)
+diff --git a/libkvmchan/daemon/vfio.c b/libkvmchan/daemon/vfio.c
+index a338989..70c50b2 100644
+--- a/libkvmchan/daemon/vfio.c
++++ b/libkvmchan/daemon/vfio.c
+@@ -87,6 +87,10 @@
+ #include "config.h"
+ #include "libkvmchan-priv.h"
+ 
++#ifdef HAVE_SYSTEMD
++#include <systemd/sd-daemon.h>
++#endif
++
+ #define REASONABLE_PATH_LEN 512
+ #define IOMMU_GROUP_LENGTH  4
+ 
+@@ -1220,6 +1224,22 @@ void run_vfio_loop(int mainsoc) {
+         goto error;
+     g_vfio_data = &vfio;
+ 
++#ifdef HAVE_SYSTEMD
++    log(LOGL_INFO, "guest_main: sd_notify");
++    /**
++     * sd_notify(int unset_environment, const char *state);
++     *
++     * If the unset_environment parameter is non-zero, sd_notify() will unset
++     * the $NOTIFY_SOCKET environment variable before returning (regardless of
++     * whether the function call itself succeeded or not). Further calls to
++     * sd_notify() will then fail, but the variable is no longer inherited by
++     * child processes.
++     */
++    if (getenv("NOTIFY_SOCKET")) {
++        sd_notify(1, "READY=1");
++    }
++#endif /* HAVE_SYSTEMD */
++
+     // Epoll loop to check for disconnected devices
+     struct epoll_event events[5];
+     int event_count;
