@@ -1,6 +1,5 @@
 0001-systemd-notify.patch
 0002-libvirt-pci.patch
-#0100-startup-timeout.patch
 1000-libvirt-pci-qubes.patch
 #2000-logging-daemon.patch
 #2001-logging-base.patch
