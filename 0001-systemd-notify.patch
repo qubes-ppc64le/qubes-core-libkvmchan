@@ -21,11 +21,11 @@ index eec5ab9..3a02ef6 100644
  
  TEST_SRCS:=test.c
  TEST_DEPS:=$(TEST_SRCS:.c=.o)
-diff --git a/libkvmchan/daemon/vfio.c b/libkvmchan/daemon/vfio.c
-index a338989..70c50b2 100644
---- a/libkvmchan/daemon/vfio.c
-+++ b/libkvmchan/daemon/vfio.c
-@@ -87,6 +87,10 @@
+diff --git a/libkvmchan/daemon/localhandler.c b/libkvmchan/daemon/localhandler.c
+index 46d6df2..beb4a16 100644
+--- a/libkvmchan/daemon/localhandler.c
++++ b/libkvmchan/daemon/localhandler.c
+@@ -40,6 +40,10 @@
  #include "config.h"
  #include "libkvmchan-priv.h"
  
@@ -33,12 +33,12 @@ index a338989..70c50b2 100644
 +#include <systemd/sd-daemon.h>
 +#endif
 +
- #define REASONABLE_PATH_LEN 512
- #define IOMMU_GROUP_LENGTH  4
- 
-@@ -1220,6 +1224,22 @@ void run_vfio_loop(int mainsoc) {
+ // Whenever one of our clients creates a vchan in server mode,
+ // we need to record it so that we can clean it up when the client
+ // disconnects.
+@@ -572,6 +576,22 @@ void run_localhandler_loop(int mainsoc, bool is_dom0) {
+     if (!vec_voidp_init(&data.clients, 10, client_destructor))
          goto error;
-     g_vfio_data = &vfio;
  
 +#ifdef HAVE_SYSTEMD
 +    log(LOGL_INFO, "guest_main: sd_notify");
@@ -56,6 +56,6 @@ index a338989..70c50b2 100644
 +    }
 +#endif /* HAVE_SYSTEMD */
 +
-     // Epoll loop to check for disconnected devices
+     // Poll for events
      struct epoll_event events[5];
      int event_count;
