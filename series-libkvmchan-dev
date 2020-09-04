@@ -1,4 +1,6 @@
-0001-systemd-notify.patch
+0001-systemd-notify.patch       # Pull request in-progress
 1000-libvirt-pci-qubes.patch
-#2000-logging-daemon.patch
-#2001-logging-base.patch
+
+#### DEBUG ONLY
+#2000-logging-daemon.patch      # Disabled by default
+#2001-logging-base.patch        # Disabled by defatut
