@@ -268,7 +268,6 @@ static bool attach_ivshmem_device(virDomainPtr dom, const char *path, uint32_t i
      * about dedicated pci host bridges.
      */
 
-#ifdef HAVE_QUBES
     // A QMP command to add a new chardev with formats %d %s (index, path)
     const char qmp_new_chardev_format[] = "{\"execute\":\"chardev-add\", \"arguments\": {\"id\":"
         "\"charshmem%"PRIu32"\", \"backend\":{ \"type\": \"socket\", \"data\": "
@@ -280,38 +279,9 @@ static bool attach_ivshmem_device(virDomainPtr dom, const char *path, uint32_t i
 
     // Fill in arguments for chardev and ivshmem commands
     char chardev_buf[sizeof(qmp_new_chardev_format) + 255 /* enough for the path? */];
-    char ivshmem_buf[sizeof(qmp_new_ivshmem_format) + 255 /* enough for pci bus? */];
+    char ivshmem_buf[sizeof(qmp_new_chardev_format) + 255 /* enough for pci bus? */];
     snprintf(chardev_buf, sizeof(chardev_buf), qmp_new_chardev_format, index, path);
     snprintf(ivshmem_buf, sizeof(ivshmem_buf), qmp_new_ivshmem_format, index);
-#else
-    /* QUBES TEST CODE */
-
-    // A QMP command to add a new chardev with formats %d %s (index, path)
-    const char qmp_new_chardev_format[] = "{\"execute\":\"chardev-add\", \"arguments\": {\"id\":"
-        "\"charshmem%"PRIu32"\", \"backend\":{ \"type\": \"socket\", \"data\": "
-        "{\"server\": false, \"addr\": {\"type\": \"unix\", \"data\": {\"path\": \"%s\"} } } } } }";
-
-    // A QMP command to add a new ivshmem device with format %d (index)
-    const char qmp_new_ivshmem_format[] = "{\"execute\":\"device_add\", \"arguments\": {\"driver\": "
-        "\"ivshmem-doorbell\", \"id\":\"shmem%1$"PRIu32"\", \"chardev\":\"charshmem%1$"PRIu32"\", \"vectors\": 2,"
-        "\"bus\": \"%2$s\", \"addr\": \"%3$s\"}}";
-
-    // Fill in arguments for chardev and ivshmem commands
-    char chardev_buf[sizeof(qmp_new_chardev_format) + 255];
-    char ivshmem_buf[sizeof(qmp_new_ivshmem_format) + 255];
-    snprintf(chardev_buf, sizeof(chardev_buf), qmp_new_chardev_format, index, path);
-
-    // TODO: CONVERT TO HEX
-    const char pci_bus_format[] = "pci.%1$"PRIu32"";
-    const char pci_slot_format[] = "0x%1$"PRIu32"";
-    char pci_bus[10 /* pcie.ff.ff */];
-    char pci_slot[4 /* 0xff */];
-
-    // XXX:  TEMP:  Manually setting PCI bus to 2
-    snprintf(pci_bus, sizeof(pci_bus), pci_bus_format, 2);
-    snprintf(pci_slot, sizeof(pci_slot), pci_slot_format, index+1);
-    snprintf(ivshmem_buf, sizeof(ivshmem_buf), qmp_new_ivshmem_format, index, pci_bus, pci_slot);
-#endif
 
 #elif defined(USE_VFIO_SPAPR)
     /**

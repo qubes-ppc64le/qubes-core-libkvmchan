@@ -4,23 +4,12 @@ BIN:=libkvmchan.so
 LIBS=-lrt -pthread
 DEBUG:=true
 
-SYSTEMD ?= 1
-BACKEND_VMM ?=
-
 DAEMON_SRCS:=daemon/daemon.c daemon/libvirt.c daemon/util.c daemon/ivshmem.c daemon/vfio.c \
 	daemon/ipc.c daemon/connections.c daemon/localhandler.c
 DAEMON_DEPS:=$(DAEMON_SRCS:.c=.daemon.o)
 DAEMON_BIN:=kvmchand
 DAEMON_LIBS:=-lrt -pthread $(shell pkg-config --libs libvirt libvirt-qemu libxml-2.0)
 DAEMON_CFLAGS:=$(shell pkg-config --cflags libxml-2.0)
-ifeq ($(SYSTEMD),1)
-DAEMON_CFLAGS += -DHAVE_SYSTEMD
-DAEMON_LIBS += `pkg-config --libs libsystemd || pkg-config --libs libsystemd-daemon`
-endif
-ifeq ($(BACKEND_VMM),kvm)
-DAEMON_CFLAGS += -DHAVE_QUBES
-endif
-
 
 TEST_SRCS:=test.c
 TEST_DEPS:=$(TEST_SRCS:.c=.o)
