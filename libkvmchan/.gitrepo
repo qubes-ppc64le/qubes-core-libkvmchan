@@ -6,7 +6,7 @@
 [subrepo]
 	remote = git@github.com:nrgaway/libkvmchan.git
 	branch = master
-	commit = 8b605c2e616b4b61b267e5ef8f2552063d3fcb6b
+	commit = 7517cd8d6a555c0c03458b4bd00d12dc896991f3
 	parent = 9ffcdee6938331144e8607c73325df3de825ffa8
 	method = merge
 	cmdver = 0.4.0
