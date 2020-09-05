@@ -5,7 +5,7 @@ index 3a02ef6..4656602 100644
 @@ -5,6 +5,7 @@ LIBS=-lrt -pthread
  DEBUG:=true
  
- SYSTEMD ?= 1
+ SYSTEMD ?= 0
 +BACKEND_VMM ?=
  
  DAEMON_SRCS:=daemon/daemon.c daemon/libvirt.c daemon/util.c daemon/ivshmem.c daemon/vfio.c \
