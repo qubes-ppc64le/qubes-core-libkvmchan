@@ -6,7 +6,7 @@
 
 USAGE="$0 [--vanilla] <series.conf> <patchdir> [symbol ...]"
 
-SERIES_CONF="series-libkvmchan-dev"
+SERIES_CONF="series.conf"
 PATCH_DIR="${0%/*}"
 
 (
@@ -16,4 +16,6 @@ PATCH_DIR="${0%/*}"
 	sed "s|^|patch -s -F0 -E -p1 --no-backup-if-mismatch -i $PATCH_DIR/|"
 	#sed "s|^|patch -s -F0 -E -p1 --no-backup-if-mismatch --reject-file=- -i $PATCH_DIR/|"
 ) | sh
+
+touch PATCHES_APPLIED
 

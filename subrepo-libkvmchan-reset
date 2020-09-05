@@ -4,3 +4,5 @@
 git subrepo clean libkvmchan --force
 git restore libkvmchan/*
 
+rm -f PATCHES_APPLIED
+
