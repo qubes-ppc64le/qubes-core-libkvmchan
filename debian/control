@@ -5,15 +5,23 @@ Maintainer: Jason Mehring <nrgaway@gmail.com>
 ## XXX: libvirt-dev and libxml2-dev are temp depends. The libkvmchan code needs
 ##      to be split into host / guest modules since libvirt is only required on
 ##      host.
-Build-Depends: debhelper, quilt, autotools-dev, check, libvirt-dev, libxml2-dev
+Build-Depends:
+ debhelper (>= 12~),
+ quilt,
+ check,
+ gcc,
+ libvirt-dev,
+ libxml2-dev,
+ libsystemd-dev,
 Standards-Version: 3.9.5
 Homepage: http://www.qubes-os.org
 
 Package: libkvmchan
 Section: libs
 Architecture: amd64
-#Depends: libxenstore3.0, ${shlibs:Depends}, ${misc:Depends}
 Depends: ${shlibs:Depends}, ${misc:Depends}
+#Provides: qubes-core-libs
+#Provides: qubes-libvchan
 Description:
  An implementation of the Xen libvchan shared memory API for KVM+QEMU. It
  utilizes ivshmem to provide the memory backend and a custom daemon to allow
@@ -22,5 +30,21 @@ Description:
 Package: libkvmchan-dev
 Section: libdevel
 Architecture: amd64
+Depends: libkvmchan (= ${binary:Version}), pkg-config, ${misc:Depends}
+#Provides: qubes-core-vm-dev
+#Provides: qubes-core-libs-dev
+#Provides: qubes-libvchan-dev
+#Provides: qubes-libvchan-dev
+Description: Include files for libkvmchan library.
+
+Package: libkvmchan-host
+Section: admin
+Architecture: amd64
 Depends: libkvmchan (= ${binary:Version}), ${misc:Depends}
-Description: Development files for libkvmchan communication library.
+Description: Host libkvmchan daemon service.
+
+Package: libkvmchan-vm
+Section: admin
+Architecture: amd64
+Depends: libkvmchan (= ${binary:Version}), ${misc:Depends}
+Description: Guest VM libkvmchan daemon service.
