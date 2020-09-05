@@ -1,0 +1,2 @@
+usr/lib/qubes/qubes-kvm
+lib/systemd/system/kvmchand.service
