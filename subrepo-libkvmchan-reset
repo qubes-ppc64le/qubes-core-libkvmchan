@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# Clean libkvmchan subrepo
+git subrepo clean libkvmchan --force
+git restore libkvmchan/*
+
