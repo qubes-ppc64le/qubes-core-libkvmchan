@@ -27,7 +27,7 @@
 Name:           libkvmchan-host
 Version:        @VERSION@
 Release:        1%{dist}
-Summary:        KVM libkvmchan service
+Summary:        KVM libkvmchan host service
 
 Group:          Qubes
 License:        GNU LGPL v3.0
