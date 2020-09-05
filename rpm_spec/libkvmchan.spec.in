@@ -50,7 +50,6 @@ Source0:        %{name}-%{version}.tar.gz
 
 # Don't re-apply patches if they have already been applied
 %if !%{patches_applied}
-Patch1: 0001-systemd-notify.patch
 Patch1000: 1000-libvirt-pci-qubes.patch
 %endif
 
