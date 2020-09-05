@@ -21,10 +21,13 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
+# Don't re-apply patches if they have already been applied
+%define patches_applied %([ -e "PATCHES_APPLIED" ] && echo 1 || echo 0)
+
 Name:           libkvmchan
 Version:        @VERSION@
 Release:        1%{dist}
-Summary:        KVM libkvmchan libraries
+Summary:        KVM libkvmchan library
 
 Group:          Qubes
 License:        GNU LGPL v3.0
@@ -45,6 +48,12 @@ BuildRequires:  libxml2-devel
 Requires:       %{name}-libs = %{version}-%{release}
 Source0:        %{name}-%{version}.tar.gz
 
+# Don't re-apply patches if they have already been applied
+%if !%{patches_applied}
+Patch1: 0001-systemd-notify.patch
+Patch1000: 1000-libvirt-pci-qubes.patch
+%endif
+
 %description
 An implementation of the Xen libvchan shared memory API for KVM+QEMU. It
 utilizes ivshmem to provide the memory backend and a custom daemon to allow
@@ -58,7 +67,7 @@ Group:          Qubes
 libkvmchan library.
 
 %package devel
-Summary:        Include files for libkvmchan libraries
+Summary:        Include files for libkvmchan library
 Group:          Qubes
 License:        GNU LGPL v3.0
 Provides:       qubes-core-vm-devel
@@ -72,7 +81,7 @@ Requires:       pkgconfig
 %description devel
 
 %prep
-%setup -q
+%autosetup -p1
 
 %build
 %set_build_flags
