@@ -17,7 +17,7 @@ rpms-vm:
 	PACKAGE_SET=vm rpmbuild --define "_rpmdir $(RPMS_DIR)" -bb rpm_spec/libkvmchan.spec
 
 all:
-	$(MAKE) -C libkvmchan
+	SYSTEMD=1 $(MAKE) -C libkvmchan
 
 install:
 	install -D libkvmchan/kvmchand ${DESTDIR}$(SBINDIR)/kvmchand
