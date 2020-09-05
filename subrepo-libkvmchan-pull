@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# Update libkvmchan subrepo
+git subrepo fetch libkvmchan
+git subrepo pull libkvmchan
+
