@@ -1,0 +1,57 @@
+--- a/libkvmchan/util.c
++++ b/libkvmchan/util.c
+@@ -0,0 +1,27 @@
++#include <stdlib.h>
++#include <stdio.h>
++#include <stdarg.h>
++#include <string.h>
++#include <assert.h>
++#include <ctype.h>
++
++#include "util.h"
++
++const char *debug_level_names[] = {
++    "[INFO]",
++    "[WARN]",
++    "[ERROR]",
++    "[BUG]"
++};
++
++void debug_impl(enum debug_level level, const char *file, int line, const char *fmt, ...) {
++    va_list args;
++    va_start(args, fmt);
++
++    fprintf(stderr, "%s %s:%d: ", debug_level_names[level], file, line);
++    vfprintf(stderr, fmt, args);
++    fputc('\n', stderr);
++
++    va_end(args);
++}
++
+--- a/libkvmchan/util.h
++++ b/libkvmchan/util.h
+@@ -0,0 +1,15 @@
++#include <stdint.h>
++#include <stdlib.h>
++#include <stdbool.h>
++#include <sys/types.h>
++
++enum debug_level {
++    LOGL_INFO,
++    LOGL_WARN,
++    LOGL_ERROR,
++    LOGL_BUG // Internal use only through log_BUG
++};
++
++#define debug(level, fmt, ...) debug_impl(level, __FILE__, __LINE__, fmt, ##__VA_ARGS__)
++void debug_impl(enum debug_level level, const char *file, int line, const char *fmt, ...);
++
+--- a/libkvmchan/Makefile
++++ b/libkvmchan/Makefile
+@@ -1,4 +1,4 @@
+-SRCS:=library.c ringbuf.c
++SRCS:=library.c ringbuf.c util.c
+ DEPS:=$(SRCS:.c=.o)
+ BIN:=libkvmchan.so
+ LIBS=-lrt -pthread
+

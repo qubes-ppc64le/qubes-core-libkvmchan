@@ -51,6 +51,7 @@ Source0:        %{name}-%{version}.tar.gz
 # Don't re-apply patches if they have already been applied
 %if !%{patches_applied}
 Patch1000: 1000-libvirt-pci-qubes.patch
+Patch1001: 1001-libvirt-skip-running-domains.patch
 %endif
 
 %description

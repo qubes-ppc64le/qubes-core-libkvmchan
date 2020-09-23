@@ -1,0 +1,13 @@
+--- a/libkvmchan/daemon/libvirt.c
++++ b/libkvmchan/daemon/libvirt.c
+@@ -776,6 +776,10 @@
+     if (sem_init(&running_domains_sem, 0, 1) < 0)
+         goto error;
+ 
++    // XXX: TEMP: Don't attempt to attach to any running domains...
++    n_domains=0;
++    ////////
++
+     if (n_domains > 0) {
+         int *domains = calloc(n_domains, sizeof(int));
+         if (!domains) {
