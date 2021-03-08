@@ -48,12 +48,6 @@ BuildRequires:  libxml2-devel
 Requires:       %{name}-libs = %{version}-%{release}
 Source0:        %{name}-%{version}.tar.gz
 
-# Don't re-apply patches if they have already been applied
-%if !%{patches_applied}
-Patch1000: 1000-libvirt-pci-qubes.patch
-Patch1001: 1001-libvirt-skip-running-domains.patch
-%endif
-
 %description
 An implementation of the Xen libvchan shared memory API for KVM+QEMU. It
 utilizes ivshmem to provide the memory backend and a custom daemon to allow
