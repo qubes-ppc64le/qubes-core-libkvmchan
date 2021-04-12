@@ -4,7 +4,7 @@
 # Copyright (C) 2010  Joanna Rutkowska <joanna@invisiblethingslab.com>
 # Copyright (C) 2010  Rafal Wojtczuk  <rafal@invisiblethingslab.com>
 # Copyright (C) 2012  Marek Marczykowski <marmarek@invisiblethingslab.com>
-# Copyright (C) 2018-2019 Shawn Anastasio
+# Copyright (C) 2018-2021 Shawn Anastasio <shawn@anastas.io>
 # Copyright (C) 2020  Jason Mehring
 #
 # This program is free software: you can redistribute it and/or modify
@@ -38,11 +38,6 @@ Provides:       qubes-libvchan
 BuildRequires:  gcc
 BuildRequires:  check-devel
 BuildRequires:  systemd-devel
-## XXX: libvirt-dev and libxml2-dev are temp depends. The libkvmchan code needs
-##      to be split into host / guest modules since libvirt is only required on
-##      host.
-BuildRequires:  libvirt-devel
-BuildRequires:  libxml2-devel
 ########
 #Requires:       %%{name}-libs-%%{version}-%%{release}
 Requires:       %{name}-libs = %{version}-%{release}

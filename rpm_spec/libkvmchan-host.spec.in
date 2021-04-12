@@ -4,7 +4,7 @@
 # Copyright (C) 2010  Joanna Rutkowska <joanna@invisiblethingslab.com>
 # Copyright (C) 2010  Rafal Wojtczuk  <rafal@invisiblethingslab.com>
 # Copyright (C) 2012  Marek Marczykowski <marmarek@invisiblethingslab.com>
-# Copyright (C) 2018-2019 Shawn Anastasio
+# Copyright (C) 2018-2021 Shawn Anastasio <shawn@anastas.io>
 # Copyright (C) 2020  Jason Mehring
 #
 # This program is free software: you can redistribute it and/or modify
@@ -37,11 +37,20 @@ BuildRequires:  systemd-devel
 Requires:       libkvmchan
 #Requires:       %%{name} = libs-%%{version}-%%{release}
 Requires(post): /bin/systemctl
+Requires(pre): shadow-utils
 
 Source0:        libkvmchan-%{version}.tar.gz
 
 %description
 Host libkvmchan daemon service.
+
+%pre
+# https://fedoraproject.org/wiki/Packaging%3aUsersAndGroups
+getent group kvmchand >/dev/null || groupadd -r kvmchand
+getent passwd kvmchand >/dev/null || \
+    useradd -r -g kvmchand -d / -s /sbin/nologin \
+    -c "User for executing libkvmchan daemons" kvmchand
+exit 0
 
 %prep
 #%%setup -q
